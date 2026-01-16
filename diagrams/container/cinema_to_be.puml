@@ -55,16 +55,16 @@ Rel(PaymentService, Kafka, "Оплата прошла")
 Rel(SubscriptionService, Kafka, "Слушает события об оплате")
 
 Rel(MoviesService, onlinecinema_ext, "Запрос данных для стрима фильма")
-Rel(MoviesService, onlinecinema_ext, "Запрос списка доступных фильмов(по cron)")
+Rel(MoviesService, onlinecinema_ext, "по cron: запрос списка доступных фильмов")
 
 Rel(ApiGateway, ViewHistoryService, "Фильм просмотрен/Фильм оценен пользователем")
 Rel(ViewHistoryService, Kafka, "Новая оценка фильма")
 Rel(MoviesService, Kafka, "Слушает оценки фильма")
 
-Rel(ApiGateway, UserService, "Запрос рекомендаций для пользователя")
-Rel(RecommendationService, Kafka, "Слушает обновления оценок фильмов пользователем")
+Rel(ApiGateway, RecommendationService, "Запрос рекомендаций для пользователя")
+Rel(RecommendationService, Kafka, "Слушает оценки фильмов")
 Rel(RecommendationService, RabbitMQ, "Отправка данных для рекомендаций")
-Rel(recomendation_ext, RabbitMQ, "Обновление рекомендаций")
+Rel(recomendation_ext, RabbitMQ, "по cron: обновление рекомендаций")
 Rel(recomendation_ext, RabbitMQ, "Слушает данные для рекомендаций")
 Rel(RecommendationService, RabbitMQ, "Слушает обновление рекомендаций")
 

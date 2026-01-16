@@ -9,7 +9,7 @@
 4) Рекомендательная система регулярно пересчитывает рекомендации и отправляет результат в RabbitMQ
 5) Рекомендательная система не готова перейти с RabbitMQ на Kafka
 
-[Диаграмма контейнеров C4 (to be)](/diagrams/container/cinema_to_be.puml)
+[Диаграмма контейнеров C4 (to be)](diagrams/container/cinema_to_be.puml)
 
 
 ## Задание 2
