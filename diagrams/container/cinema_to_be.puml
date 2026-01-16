@@ -1,0 +1,78 @@
+@startuml
+title Cinemaabyss Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "User", "Пользователь Кинобездны")
+
+System(CinemaabyssSystem, "Cinemaabyss System", "Система Кинобездны")
+
+Container_Boundary(CinemaabyssSystem, "Cinemaabyss System") {
+  Container(WebApp, "WebApp", "JavaScript, React", "Фронт для браузера")
+  Container(MobileApp, "MobileApp", "Kotlin", "Фронт для мобильного Android")
+  Container(MobileIOSApp, "MobileIOSApp", "Swift", "Фронт для мобильного IOS")
+  Container(SmartTVApp, "SmartTVApp", "JavaScript", "Фронт для Smart TV")
+  Container(ApiGateway, "API Gateway", "Kotlin, Spring", "Аутентификация и маршрутизация запросов")
+  Container(UserService, "User Service", "Kotlin, Spring", "Управление пользователями")
+  Container(UserDatabase, "User Database", "PostgreSQL", "Хранит пользователей")
+  Container(MoviesService, "Movies Service", "Go", "Предоставление каталога фильмов")
+  Container(MoviesDatabase, "Movies Database", "PostgreSQL", "Хранит данные о фильмах")
+  Container(RecommendationService, "Recommendation Service", "Kotlin, Spring", "Отправляет данные, необходимые для рекомендаци во внешний сервис/Хранит кеш рекомендации")
+  Container(RecommendationDatabase, "Recommendation Database", "PostgreSQL", "Хранит кеш рекомендации")
+  Container(PaymentService, "Payment Service", "Kotlin, Spring", "Управление оплатами")
+  Container(PaymentDatabase, "Payment Database", "PostgreSQL", "Хранит данные об оплатах")
+  Container(SubscriptionService, "Subscription Service", "Kotlin, Spring", "Управление подписками")
+  Container(SubscriptionDatabase, "Subscription Database", "PostgreSQL", "Хранит данные об подписках")
+  Container(ViewHistoryService, "ViewHistory Service", "Kotlin, Spring", "История просмотров и оценки пользователей")
+  Container(ViewHistoryDatabase, "ViewHistory Database", "PostgreSQL", "Хранит историю просмотров и оценки пользователей")
+  ContainerQueue(Kafka, "Kafka", "", "События: пользователь изменен, оплата прошла, у фильма новая оценка")
+  ContainerQueue(RabbitMQ, "RabbitMQ", "", "Сообщение: составлен рекомендации для пользователя")
+}
+
+System_Ext(recomendation_ext, "Recomendation External System", "Накапливает обезличенные данные для рекомендаций/По cron обновляет рекомендации польхователя")
+System_Ext(payment_ext, "Payment External System", "Платежная система")
+System_Ext(onlinecinema_ext, "Online Cinema #1 External System", "Онлайн кинотеатр №1")
+
+Rel(user, WebApp, "Регистрация, управление подпиской, оплата, просмотр каталога фильмов, выставление оценки фильму")
+Rel(user, MobileApp, "Регистрация, управление подпиской, оплата, просмотр каталога фильмов, выставление оценки фильму")
+Rel(user, MobileIOSApp, "Регистрация, управление подпиской, оплата, просмотр каталога фильмов, выставление оценки фильму")
+Rel(user, SmartTVApp, "Просмотр каталога фильмов, выставление оценки фильму")
+
+Rel(WebApp, ApiGateway, "Взаимодействие с бэкендом")
+Rel(SmartTVApp, ApiGateway, "Взаимодействие с бэкендом")
+Rel(MobileApp, ApiGateway, "Взаимодействие с бэкендом")
+Rel(MobileIOSApp, ApiGateway, "Взаимодействие с бэкендом")
+
+Rel(ApiGateway, UserService, "Регистрация пользователя")
+Rel(ApiGateway, MoviesService, "Просмотр каталога фильмов/Запрос данных для стрима фильма")
+
+Rel(ApiGateway, SubscriptionService, "Управление подпиской/Оплата подписки")
+Rel(SubscriptionService, PaymentService, "Инициирование ручной оплаты/автооплаты")
+Rel(PaymentService, payment_ext, "Проведение оплаты")
+Rel(PaymentService, Kafka, "Оплата прошла")
+Rel(SubscriptionService, Kafka, "Слушает события об оплате")
+
+Rel(MoviesService, onlinecinema_ext, "Запрос данных для стрима фильма")
+Rel(MoviesService, onlinecinema_ext, "Запрос списка доступных фильмов(по cron)")
+
+Rel(ApiGateway, ViewHistoryService, "Фильм просмотрен/Фильм оценен пользователем")
+Rel(ViewHistoryService, Kafka, "Новая оценка фильма")
+Rel(MoviesService, Kafka, "Слушает оценки фильма")
+
+Rel(ApiGateway, UserService, "Запрос рекомендаций для пользователя")
+Rel(RecommendationService, Kafka, "Слушает обновления оценок фильмов пользователем")
+Rel(RecommendationService, RabbitMQ, "Отправка данных для рекомендаций")
+Rel(recomendation_ext, RabbitMQ, "Обновление рекомендаций")
+Rel(recomendation_ext, RabbitMQ, "Слушает данные для рекомендаций")
+Rel(RecommendationService, RabbitMQ, "Слушает обновление рекомендаций")
+
+Rel(UserService, UserDatabase, "update/read")
+Rel(MoviesService, MoviesDatabase, "update/read")
+Rel(PaymentService, PaymentDatabase, "update/read")
+Rel(SubscriptionService, SubscriptionDatabase, "update/read")
+Rel(ViewHistoryService, ViewHistoryDatabase, "update/read")
+
+
+@enduml
