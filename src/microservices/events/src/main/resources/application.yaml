@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: events
+
+server.port: ${PORT}
+
+
+kafka:
+  bootstrap:
+    servers: ${KAFKA_BROKERS}
+  consumer_group: events_group

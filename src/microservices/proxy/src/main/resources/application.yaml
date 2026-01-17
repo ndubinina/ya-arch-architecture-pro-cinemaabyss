@@ -1,0 +1,21 @@
+spring.application.name: proxy
+
+server.port: ${PORT}
+
+proxy:
+  gradual_migration: ${GRADUAL_MIGRATION}
+  movies_migration_percent: ${MOVIES_MIGRATION_PERCENT}
+
+webclient:
+  monolith:
+    url: ${MONOLITH_URL}
+    timeout: 5000
+  movies:
+    url: ${MOVIES_SERVICE_URL}
+    timeout: 5000
+  events:
+    url: ${EVENTS_SERVICE_URL}
+    timeout: 5000
+logging.level:
+  org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+  reactor.netty.http.client.HttpClient: DEBUG
