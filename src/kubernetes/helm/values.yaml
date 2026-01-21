@@ -174,8 +174,12 @@ ingress:
           pathType: Prefix
           service: events-service
           port: 8082
-        - path: /api/movies
-          pathType: Exact
+        - path: /api/movies/health
+          pathType: Prefix
+          service: movies-service
+          port: 8081
+        - path: /health
+          pathType: Prefix
           service: proxy-service
           port: 8000
         - path: /
